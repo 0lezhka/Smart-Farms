@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  farm-service:
+    image: smart-farms-farm-service:0.0.1-SNAPSHOT
+    #    mem_limit: 700m
+    ports:
+      - "8100"
+    networks:
+      - farm-network
+
+  action-service:
+    image: smart-farms-action-service:0.0.1-SNAPSHOT
+    #    mem_limit: 700m
+    ports:
+      - "8200"
+    networks:
+      - farm-network
+
+  indicator-history-service:
+    image: smart-farms-indicator-history-service:0.0.1-SNAPSHOT
+    #    mem_limit: 700m
+    ports:
+      - "8300"
+    networks:
+      - farm-network
+
+networks:
+  farm-network:
