@@ -8,6 +8,10 @@ services:
       - "8100"
     networks:
       - farm-network
+    depends_on:
+      - naming-server
+    environment:
+      eureka.client.service-url.defaultzone: http://naming-server:8400/eureka
 
   action-service:
     image: smart-farms-action-service:0.0.1-SNAPSHOT
@@ -16,12 +20,28 @@ services:
       - "8200"
     networks:
       - farm-network
+    depends_on:
+      - naming-server
+    environment:
+      eureka.client.service-url.defaultzone: http://naming-server:8400/eureka
 
   indicator-history-service:
     image: smart-farms-indicator-history-service:0.0.1-SNAPSHOT
     #    mem_limit: 700m
     ports:
       - "8300"
+    networks:
+      - farm-network
+    depends_on:
+      - naming-server
+    environment:
+      eureka.client.service-url.defaultzone: http://naming-server:8400/eureka
+
+  naming-server:
+    image: smart-farms-naming-server:0.0.1-SNAPSHOT
+    #    mem_limit: 700m
+    ports:
+      - "8400:8400"
     networks:
       - farm-network
 
