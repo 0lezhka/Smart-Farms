@@ -9,9 +9,9 @@ services:
     networks:
       - farm-network
     depends_on:
-      - naming-server
+      - api-gateway
     environment:
-      eureka.client.service-url.defaultzone: http://naming-server:8400/eureka
+      eureka.client.service-url.defaultzone: http://naming-server:8761/eureka
 
   action-service:
     image: smart-farms-action-service:0.0.1-SNAPSHOT
@@ -21,9 +21,9 @@ services:
     networks:
       - farm-network
     depends_on:
-      - naming-server
+      - api-gateway
     environment:
-      eureka.client.service-url.defaultzone: http://naming-server:8400/eureka
+      eureka.client.service-url.defaultzone: http://naming-server:8761/eureka
 
   indicator-history-service:
     image: smart-farms-indicator-history-service:0.0.1-SNAPSHOT
@@ -33,17 +33,55 @@ services:
     networks:
       - farm-network
     depends_on:
-      - naming-server
+      - api-gateway
     environment:
-      eureka.client.service-url.defaultzone: http://naming-server:8400/eureka
+      eureka.client.service-url.defaultzone: http://naming-server:8761/eureka
+
+  api-gateway:
+    image: smart-farms-api-gateway:0.0.1-SNAPSHOT
+    #    mem_limit: 700m
+    ports:
+      - "8500:8500"
+    networks:
+      - farm-network
+    depends_on:
+      - naming-server
+      - zipkin
+    environment:
+      eureka.client.service-url.defaultzone: http://naming-server:8761/eureka
+      spring.zipkin.base-url: http://zipkin:9411/
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      spring.rabbitmq.host: rabbitmq
+      spring.zipkin.sender.type: rabbit
 
   naming-server:
     image: smart-farms-naming-server:0.0.1-SNAPSHOT
     #    mem_limit: 700m
     ports:
-      - "8400:8400"
+      - "8761:8761"
     networks:
       - farm-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - farm-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      farm-network:
+    depends_on:
+      - rabbitmq
+    restart: on-failure
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
 
 networks:
   farm-network:

@@ -30,5 +30,6 @@
 		<module>FarmService</module>
 		<module>IndicatorHistoryService</module>
 		<module>NamingServer</module>
+		<module>ApiGateway</module>
 	</modules>
 </project>
