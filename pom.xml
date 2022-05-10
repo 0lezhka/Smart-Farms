@@ -29,5 +29,6 @@
 		<module>ActionService</module>
 		<module>FarmService</module>
 		<module>IndicatorHistoryService</module>
+		<module>Simulator</module>
 	</modules>
 </project>
